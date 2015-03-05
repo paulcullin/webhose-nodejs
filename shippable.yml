@@ -1,0 +1,31 @@
+language: node_js
+
+env:
+  - global:
+    - NODE_ENV=development
+    #WEBHOSE_TOKEN
+    - secure: Dz0VK4AJd7uiQqAX0zvxaKdQyKZbt3g+Bpsu+QWw8IFTdVC86balVc4GHx/eXJaUZKvGOtpuja3TfNoJoSscQQue0JMwgyi0NopK8kJa4TILUnzQ27aeRApnDTdvJYuNCjoxJYSWa63KjuSjgztB6wV3YFqhIoZhmgrxBNL33Up26rJ+j5Il317ojW5wguP0ILakXN3r97PlvSXFaJD1jc4btWPAS7NcPLNkQfjF0dIOsR3gjefRtNKi/qRrVIY4KtAWUzIzJnNvEh3UvwsFjye7YdSN+PAEXuQPPtdyya645BuRY9KiJePUdHXT6JMJ9yFqQ+CmCzfXoGfQEQ2TpA==
+
+branches:
+  only:
+    - develop
+
+cache: true
+
+notifications:
+    email:
+        - pcullin@weareratio.com
+
+before_script:
+  - mkdir -p shippable/testresults
+  - mkdir -p shippable/codecoverage
+
+before_install:
+ - npm install
+
+install:
+  - npm test
+
+after_script:
+  - ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha
+  - ./node_modules/.bin/istanbul report cobertura --dir shippable/codecoverage/
