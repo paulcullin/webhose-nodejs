@@ -1,0 +1,30 @@
+{
+  "name": "webhose-nodejs",
+  "version": "0.0.1",
+  "description": "webhose.io client for Node.js",
+  "main": "webhose.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pcullin-ratio/webhose-nodejs.git"
+  },
+  "keywords": [
+    "webhose.io",
+    "node"
+  ],
+  "author": "Paul Cullin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pcullin-ratio/webhose-nodejs/issues"
+  },
+  "homepage": "https://github.com/pcullin-ratio/webhose-nodejs",
+  "devDependencies": {
+    "chai": "^2.1.1",
+    "sinon": "^1.12.2"
+  }
+}
