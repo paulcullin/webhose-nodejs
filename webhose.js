@@ -1,31 +1,66 @@
 'use strict'
 
+var Post = require('./post.js'),
+    Errors = require('./errors.js');
+
 // Constructor
-var Webhose = function () {
-    this.token = process.env.WEBHOSE_TOKEN;
-    this.options.format = this.enums.format.json;
-    this.options.language = this.enums.language.any;
-    this.options.site_type = this.enums.siteType.any;
+var Webhose = function (get) {
+    if (!get) {
+        throw Errors.MissingGetDependencyError;
+    }
+    this.get = get;
+    this.options = {};
 };
 
-// private members
+var SearchError = function (msg, errors) {
+    this.msg = msg;
+    this.errors = errors;
+};
 
-// properties and methods
-Webhose.prototype.query = function (q, options, cb) {
-    if (!q || q.constructor !== Array || q.length < 1) {
-        return cb(this.errors.QueryArgumentException, null);
+Webhose.prototype.search = function (q, options, cb) {
+    if (!q || typeof q === 'undefined') {
+        var err = Errors.SearchError;
+        err.msg = Errors.SearchArgumentException;
+        err.errors = [Errors.MissingQueryArgumentException];
+        throw err;
+    }
+
+    if (typeof q !== 'string') {
+        var err = Errors.SearchError;
+        err.msg = Errors.SearchArgumentException;
+        err.errors = [Errors.InvalidQueryArgumentFormatException];
+        throw err;
+    }
+
+    if (!cb || typeof cb === 'undefined') {
+        var err = Errors.SearchError;
+        err.msg = Errors.SearchArgumentException;
+        err.errors = [Errors.MissingCallbackArgumentException];
+        throw err;
+    }
+
+    if (cb.length != 2) {
+        var err = Errors.SearchError;
+        err.msg = Errors.SearchArgumentException;
+        err.errors = [Errors.InvalidCallbackArgumentFormatException];
+        throw err;
     }
 
     if (options) {
         var errors = this.validateOptions(options);
         if (errors.length > 0) {
-            return cb(errors[0], null);
+            var err = Errors.SearchError;
+            err.msg = Errors.SearchArgumentException;
+            err.errors = errors;
+            throw err;
+            //var searchError = new SearchError(Errors.SearchArgumentException, errors);
+            //return cb(searchError, null);
         }
     }
 
-    // TODO: implement POST request to Webhose.io API here
-    var response = {};
-    cb(null, response);
+    this.get.send(q, options, function(err, res) {
+        return cb(err, res);
+    });
 };
 
 Webhose.prototype.validateOptions = function (options) {
@@ -33,19 +68,50 @@ Webhose.prototype.validateOptions = function (options) {
 
     if (options.format) {
         if (options.format !== this.enums.format.json && options.format !== this.enums.format.xml) {
-            errors.push(this.errors.InvalidFormatOptionException);
+            errors.push(Errors.InvalidFormatOptionException);
         }
     }
 
     if (options.language) {
         if (!this.isObjectProperty(this.enums.language, options.language)) {
-            errors.push(this.errors.InvalidLanguageOptionException);
+            errors.push(Errors.InvalidLanguageOptionException);
         }
     }
 
     if (options.site_type) {
         if (!this.isObjectProperty(this.enums.siteType, options.site_type)) {
-            errors.push(this.errors.InvalidSiteTypeOptionException);
+            errors.push(Errors.InvalidSiteTypeOptionException);
+        }
+    }
+
+    if (typeof options.size !== 'undefined') {
+        var numSize = parseInt(options.size);
+        if (isNaN(numSize) || 1 > numSize || numSize > 100) {
+            errors.push(Errors.InvalidSizeOptionException);
+        }
+    }
+
+    if (typeof options.spam_score !== 'undefined') {
+        var numSize = parseFloat(options.spam_score);
+        if (isNaN(numSize) || 0 > numSize || numSize > 1) {
+            errors.push(Errors.InvalidSpamScoreOptionException);
+        }
+    }
+
+    if (options.is_first) {
+        if (typeof options.is_first !== 'boolean') {
+            errors.push(Errors.InvalidIsFirstOptionException);
+        }
+    }
+
+    if(options.exclude) {
+        if (typeof options.exclude !== 'object') {
+            errors.push(Errors.InvalidExcludeOptionException);
+        }
+        for (var excludeProp in options.exclude) {
+            if (!this.isObjectProperty(Post.thread, excludeProp)) {
+                errors.push(Errors.InvalidExcludeOptionException);
+            }
         }
     }
 
@@ -61,20 +127,6 @@ Webhose.prototype.isObjectProperty = function (obj, prop) {
         }
     }
     return false;
-};
-
-Webhose.prototype.options = {
-    format: null,
-    language: null,
-    site_type: null,
-    author: null,
-    exclude: 'exclude_',
-    size: 100,
-    thread_country: null,
-    thread_url: null,
-    thread_section_title: null,
-    spam_score: null,
-    is_first: null
 };
 
 Webhose.prototype.enums = {
@@ -94,13 +146,6 @@ Webhose.prototype.enums = {
         discussions: 'discussions'
     },
     size: 100
-};
-
-Webhose.prototype.errors = {
-    QueryArgumentException: 'At least one query term is required',
-    InvalidFormatOptionException: 'options.format must be either json or xml',
-    InvalidLanguageOptionException: 'options.language has an invalid value',
-    InvalidSiteTypeOptionException: 'options.site_type has an invalid value'
 };
 
 module.exports = Webhose;
