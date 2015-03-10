@@ -29,3 +29,6 @@ node_modules
 
 # WebStorm idea files
 .idea
+
+# Shippable test results
+shippable

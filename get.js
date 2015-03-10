@@ -21,7 +21,7 @@ var Get = function () {
 //};
 
 Get.prototype.send = function (q, options, cb) {
-    var requestUrl = process.env.WEBHOSE_URI + '?'; // + '?token=' + process.env.WEBHOSE_TOKEN + '&q=' + q;
+    var requestUrl = process.env.WEBHOSE_URI + '?';
 
     if (!q) {
         throw Errors.MissingQueryArgumentException;

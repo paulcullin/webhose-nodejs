@@ -357,6 +357,7 @@ describe('webhose.io Integration Tests:', function() {
             // generate a random size between 1 and 10
             var testSize = (Math.floor(Math.random() * (10 - 1 + 1)) + 1)
             client.search(validQuery, {size: testSize}, function(err, res) {
+                expect(err).to.not.exist;
                 expect(res).to.have.property('status', 200);
                 expect(JSON.parse(res.data)).to.have.property('posts').that.is.an('array').with.length(testSize);
                 done();
