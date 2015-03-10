@@ -54,8 +54,6 @@ Webhose.prototype.search = function (q, options, cb) {
             err.msg = Errors.SearchArgumentException;
             err.errors = errors;
             throw err;
-            //var searchError = new SearchError(Errors.SearchArgumentException, errors);
-            //return cb(searchError, null);
         }
     }
 

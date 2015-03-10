@@ -23,7 +23,7 @@ var validQuery = '(iphone OR ipad) -android';
 /*
  Tests
  */
-describe('webhose.io Client Tests:', function () {
+describe('webhose.io Unit Tests:', function () {
 
     // stub Get so it doesn't actually hit the Webhose API with valid tests
     var getStub = sinon.stub(new Get());
@@ -253,7 +253,6 @@ describe('webhose.io Client Tests:', function () {
                 for (var property in Post.thread) {
                     if (property == 'site') threadKey = property;
                 }
-                ;
                 options.exclude = {};
                 options.exclude[threadKey] = 'wired.com';
                 var exec = client.search(validQuery, options, cb);
@@ -348,8 +347,7 @@ describe('webhose.io Client Tests:', function () {
 });
 
 describe('webhose.io Integration Tests:', function() {
-    var get = new Get();
-    var client = new Webhose(get);
+    var client = require('../client.js');
     this.timeout(5000);
 
     describe('Search', function() {
