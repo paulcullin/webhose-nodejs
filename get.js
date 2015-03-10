@@ -8,18 +8,6 @@ var request = require('request'),
 var Get = function () {
 };
 
-//var parseBody = function(data, format) {
-//    switch (format) {
-//        case Enums.format.json:
-//            return JSON.parse(data);
-//        case Enums.format.xml:
-//            parseString(data, function (err, result) {
-//                if(err) throw Errors.XmlFormatResultException;
-//                return result;
-//            });
-//    }
-//};
-
 Get.prototype.send = function (q, options, cb) {
     var requestUrl = process.env.WEBHOSE_URI + '?';
 
