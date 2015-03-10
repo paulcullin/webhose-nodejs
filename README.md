@@ -120,6 +120,8 @@ Examples:
 }
 ```
 
+The `res.data` property will be the raw response body passed directly through from Webhose, in order to provide flexibility. The response will default to JSON, but if you specify `options: {format: 'xml'}` for example, the response will come back from Webhose as XML.
+
 Hack the Module
 -------
 ### Contribute
