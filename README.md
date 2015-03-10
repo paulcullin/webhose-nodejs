@@ -1,3 +1,5 @@
+[![Build Status](https://api.shippable.com/projects/54f527155ab6cc135290d816/badge?branchName=develop)](https://app.shippable.com/projects/54f527155ab6cc135290d816/builds/latest)
+
 webhose.io client for Node.js
 ============================
 
