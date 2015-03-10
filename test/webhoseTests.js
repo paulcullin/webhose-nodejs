@@ -6,10 +6,14 @@
 var Webhose = require('../webhose.js'),
     Get = require('../get.js'),
     Errors = require('../errors.js'),
+    Enums = require('../enums.js'),
     Post = require('../post.js'),
     sinon = require('sinon'),
     chai = require('chai'),
-    expect = chai.expect;
+    expect = chai.expect,
+    rewire = require('rewire'),
+    qs = require('querystring'),
+    url = require('url');
 
 /*
  Globals
@@ -27,7 +31,7 @@ describe('webhose.io Client Tests:', function () {
     var q = null;
     var options = null;
 
-    var validationExpectations = function(q, options, cb, argException){
+    var validationExpectations = function (q, options, cb, argException) {
         expect(client.search.bind(client, q, options, cb))
             .to.throw(Errors.SearchError)
             .that.has.property('msg')
@@ -40,86 +44,18 @@ describe('webhose.io Client Tests:', function () {
             .that.contains(argException);
     };
 
-    //TODO: Options defaults - removing for now
-    /*
-    //
-    describe('Options Defaults Tests:', function () {
-        describe('format option', function () {
-            it('defaults to the string json', function () {
-                var client = new Webhose();
-                expect(client.options.format).to.be.a('string').and.to.equal('json');
-            })
-        });
-
-        describe('language option', function () {
-            it('defaults to the string any', function () {
-                var client = new Webhose();
-                expect(client.options.language).to.be.a('string').and.to.equal('any');
-            })
-        });
-
-        describe('site_type option', function () {
-            it('defaults to the string any', function () {
-                var client = new Webhose();
-                expect(client.options.site_type).to.be.a('string').and.to.equal('any');
-            })
-        });
-
-        describe('author option', function () {
-            it('defaults to null', function () {
-                var client = new Webhose();
-                expect(client.options.author).to.be.null;
-            })
-        });
-
-        describe('exclude option', function () {
-            it('defaults to the string exclude_', function () {
-                var client = new Webhose();
-                expect(client.options.exclude).to.be.a('string').and.to.equal('exclude_');
-            })
-        });
-
-        describe('size option', function () {
-            it('defaults to the number 100', function () {
-                var client = new Webhose();
-                expect(client.options.size).to.equal(100);
-            })
-        });
-
-        describe('thread_url option', function () {
-            it('defaults to null', function () {
-                var client = new Webhose();
-                expect(client.options.thread_url).to.be.null;
-            })
-        });
-
-        describe('thread_section_title option', function () {
-            it('defaults to null', function () {
-                var client = new Webhose();
-                expect(client.options.thread_section_title).to.be.null;
-            })
-        });
-
-        describe('spam_score option', function () {
-            it('defaults to null', function () {
-                var client = new Webhose();
-                expect(client.options.spam_score).to.be.null;
-            })
-        });
-    });
-    */
-
-    describe('Webhose Constructor', function() {
-        it('requires an instance of Get', function(){
+    describe('Webhose Constructor:', function () {
+        it('requires an instance of Get', function () {
             expect((Webhose).bind(Webhose)).to.throw(Errors.MissingGetDependencyError);
         });
     });
 
     describe('Search Argument Validation:', function () {
 
-        describe('q argument:', function() {
+        describe('q argument:', function () {
 
-            var cb = function(err, res){};
+            var cb = function (err, res) {
+            };
 
             it('must be non-null', function () {
                 validationExpectations(q, options, cb, Errors.MissingQueryArgumentException);
@@ -136,7 +72,7 @@ describe('webhose.io Client Tests:', function () {
             });
         });
 
-        describe('cb argument:', function() {
+        describe('cb argument:', function () {
 
             var cb = null;
 
@@ -144,13 +80,15 @@ describe('webhose.io Client Tests:', function () {
                 validationExpectations(validQuery, options, cb, Errors.MissingCallbackArgumentException);
             });
 
-            it('must have two arguments', function() {
-                cb = function(oneArg){};
+            it('must have two arguments', function () {
+                cb = function (oneArg) {
+                };
                 validationExpectations(validQuery, options, cb, Errors.InvalidCallbackArgumentFormatException);
             });
 
             it('can have two arguments', function () {
-                cb = function(oneArg, twoArg){};
+                cb = function (oneArg, twoArg) {
+                };
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
@@ -159,7 +97,8 @@ describe('webhose.io Client Tests:', function () {
 
     describe('Search Options Argument Validation Tests:', function () {
 
-        var cb = function(err, res){};
+        var cb = function (err, res) {
+        };
         var options = {};
 
         describe('format option', function () {
@@ -169,13 +108,13 @@ describe('webhose.io Client Tests:', function () {
             });
 
             it('can have value json', function () {
-                options.format = client.enums.format.json;
+                options.format = Enums.format.json;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
 
             it('can have value xml', function () {
-                options.format = client.enums.format.xml;
+                options.format = Enums.format.xml;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
@@ -188,19 +127,19 @@ describe('webhose.io Client Tests:', function () {
             });
 
             it('can have value any', function () {
-                options.language = client.enums.language.any;
+                options.language = Enums.language.any;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
 
             it('can have value english', function () {
-                options.language = client.enums.language.english;
+                options.language = Enums.language.english;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
 
             it('can have value spanish', function () {
-                options.language = client.enums.language.spanish;
+                options.language = Enums.language.spanish;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
@@ -213,25 +152,25 @@ describe('webhose.io Client Tests:', function () {
             });
 
             it('can have value any', function () {
-                options.site_type = client.enums.siteType.any;
+                options.site_type = Enums.siteType.any;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
 
             it('can have value news', function () {
-                options.site_type = client.enums.siteType.news;
+                options.site_type = Enums.siteType.news;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
 
             it('can have value blogs', function () {
-                options.site_type = client.enums.siteType.blogs;
+                options.site_type = Enums.siteType.blogs;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
 
             it('can have value discussions', function () {
-                options.site_type = client.enums.siteType.discussions;
+                options.site_type = Enums.siteType.discussions;
                 var exec = client.search(validQuery, options, cb);
                 expect(exec).to.not.throw;
             });
@@ -312,8 +251,9 @@ describe('webhose.io Client Tests:', function () {
             it('can be an object with a key that is a member of the Post.thread object', function () {
                 var threadKey = '';
                 for (var property in Post.thread) {
-                    if(property == 'site') threadKey = property;
-                };
+                    if (property == 'site') threadKey = property;
+                }
+                ;
                 options.exclude = {};
                 options.exclude[threadKey] = 'wired.com';
                 var exec = client.search(validQuery, options, cb);
@@ -323,35 +263,105 @@ describe('webhose.io Client Tests:', function () {
 
     });
 
-    describe('Search Method Tests: ', function() {
+    describe('Search Method Tests: ', function () {
         var get = sinon.stub(new Get());
         var client = new Webhose(get);
-        var cb = function(err, res){};
+        var cb = function (err, res) {
+        };
 
-        it('calls get.send() once', function() {
+        it('calls get.send() once', function () {
             client.search(validQuery, null, cb);
             expect(get.send).to.have.been.calledOnce;
         });
 
-        it('calls cb once', function() {
+        it('calls cb once', function () {
             client.search(validQuery, null, cb);
             expect(cb).to.have.been.calledOnce;
         });
     });
 
-    describe('Get Tests:', function(){
-        describe('Get.send() Method:', function(){
-            it('prevents execution with missing query', function() {
-                var get = new Get();
-                expect(get.send.bind(get, null, null, function(){})).to.throw(Errors.MissingQueryArgumentException);
+    describe('Get Tests:', function () {
+        describe('Get.send() Method:', function () {
+
+            describe('Query Argument', function () {
+                it('cannot be null/undefined', function () {
+                    var get = new Get();
+                    expect(get.send.bind(get, null, null, function () {
+                    })).to.throw(Errors.MissingQueryArgumentException);
+                });
             });
 
-            it('prevents execution with missing callback', function() {
-                var get = new Get();
-                expect(get.send.bind(get, 'test', null, null)).to.throw(Errors.MissingCallbackArgumentException);
+            describe('Callback Argument', function () {
+                it('cannot be null/undefined', function () {
+                    var get = new Get();
+                    expect(get.send.bind(get, 'test', null, null)).to.throw(Errors.MissingCallbackArgumentException);
+                });
+            });
+
+            describe('request.get', function () {
+
+                var Get, mockRequest, get, revert;
+
+                beforeEach(function() {
+                    Get = rewire('../get.js');
+                    mockRequest = {
+                        get: sinon.stub()
+                    };
+                    revert = Get.__set__('request', mockRequest);
+                    get = new Get();
+                });
+
+                afterEach(function() {
+                    revert();
+                })
+
+                it('is called once', function () {
+                    get.send(validQuery, options, function(){});
+                    expect(mockRequest.get.calledOnce).to.be.true;
+                });
+
+                it('is called with options serialized into the query string', function () {
+                    var testOptions = {
+                        format: 'json',
+                        language: 'english',
+                        site_type: 'news',
+                        exclude: 'yahoo.com',
+                        size: 5
+                    };
+                    get.send(validQuery, testOptions, function(){});
+                    var requestGetCall = mockRequest.get.getCall(0);
+                    var requestUrl = requestGetCall.args[0];
+                    var requestUrlParts = url.parse(requestUrl, true);
+                    var queryObj = requestUrlParts.query;
+                    expect(queryObj).to.have.property('format', testOptions.format);
+                    expect(queryObj).to.have.property('language', testOptions.language);
+                    expect(queryObj).to.have.property('site_type', testOptions.site_type);
+                    expect(queryObj).to.have.property('exclude', testOptions.exclude);
+                    expect(queryObj).to.have.property('size', testOptions.size.toString());
+                    expect(queryObj).to.have.property('token', process.env.WEBHOSE_TOKEN);
+                    expect(queryObj).to.have.property('q', validQuery);
+                });
             });
         });
 
     });
+});
 
+describe('webhose.io Integration Tests:', function() {
+    var get = new Get();
+    var client = new Webhose(get);
+    this.timeout(5000);
+
+    describe('Search', function() {
+        it('returns the correct number of posts when the size option is specified', function(done) {
+            // generate a random size between 1 and 10
+            var testSize = (Math.floor(Math.random() * (10 - 1 + 1)) + 1)
+            client.search(validQuery, {size: testSize}, function(err, res) {
+                expect(err).to.not.exist;
+                expect(res).to.have.property('status', 200);
+                expect(JSON.parse(res.data)).to.have.property('posts').that.is.an('array').with.length(testSize);
+                done();
+            });
+        });
+    });
 });

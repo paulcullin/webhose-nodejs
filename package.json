@@ -1,13 +1,13 @@
 {
   "name": "webhose-nodejs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "webhose.io client for Node.js",
   "main": "webhose.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test --recursive"
+    "test": "mocha test --recursive --reporter xunit > shippable/testresults/result.xml"
   },
   "repository": {
     "type": "git",
@@ -25,10 +25,10 @@
   "homepage": "https://github.com/pcullin-ratio/webhose-nodejs",
   "devDependencies": {
     "chai": "^2.1.1",
+    "rewire": "^2.3.1",
     "sinon": "^1.12.2"
   },
   "dependencies": {
-    "http-post": "^0.1.1",
     "request": "^2.53.0"
   }
 }
