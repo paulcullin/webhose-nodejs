@@ -57,7 +57,7 @@ Search Method Documentation
 
 For now, the q argument simply accepts a string that must be formatted according to the Webhose.io API requirements.
 
-### Options
+### Options Argument
  - optional, object
 
 The following options can be passed into the search method to narrow/filter the search. Some options support enum values to help narrow down the scope of those options. The Webhose client includes an enums object you can access statically. Here's an example using the `format` option:
@@ -99,8 +99,30 @@ location                | string        | <passthrough>                 | N/A
 spam_score              | float         | Any float between 0 and 1     | N/A
 is_first                | boolean       | true, false                   | N/A
 
-Errors
--------
+### Callback
+The callback expects error and response arguments. If there is an error, `res` will be null and vice-versa. In either case, the data will be wrapped with a result object.
+
+Examples:
+
+#### Success
+```js
+{
+    status: 200, // HTTP response.statusCode from Webhose.io
+    msg: 'Success',
+    data: '{"posts": [{"thread": {"url": "http:// ... }}]}'
+}
+```
+
+#### Error
+```js
+{
+    status: 401, // HTTP response.statusCode from Webhose.io
+    msg: 'Some Webhose error', // Error message/body returned from Webhose.io
+    data: null
+}
+```
+
+The `res.data` property will be the raw response body passed directly through from Webhose, in order to provide flexibility. The response will default to JSON, but if you specify `options: {format: 'xml'}` for example, the response will come back from Webhose as XML.
 
 Hack the Module
 -------
