@@ -21,7 +21,7 @@ Quick Start
 -----------
 The module depends on two Node environment variables:
 ```bash
-$ WEBHOSE_TOKEN=[your token] WEBHOSE_URI=https://webhose.io/search
+$ WEBHOSE_TOKEN=[your_token] WEBHOSE_URI=https://webhose.io/search
 ```
 WEBHOSE_URI has been included so you can dynamically set the value for multi-environment and integration testing support.
 
@@ -58,6 +58,26 @@ For now, the q argument simply accepts a string that must be formatted according
 ### Options
  - optional, object
 
+The following options can be passed into the search method to narrow/filter the search. Some options support enum values to help narrow down the scope of those options. The Webhose client includes an enums object you can access statically. Here's an example using the `format` option:
+
+```node
+var webhose = require('webhose-nodejs');
+
+var enums = webhose.enums;
+var options = {
+    format: enums.format.json
+};
+```
+
+Similarly, the `exclude` option can use another attached object, `Post`, in order to specify which thread properties to exclude.
+
+```node
+var Post = webhose.Post;
+var options = {
+    exclude: { site: 'yahoo.com' }
+};
+```
+
 Option                  | Value Type    | Acceptable Values             | Example
 ------------------------| --------------| ------------------------------|----------------------
 format                  | string        | json, xml                     | enums.format.json...
@@ -65,7 +85,7 @@ language                | string        | any, english, spanish         | enums.
 site_type               | string        | any, news, blogs, discussions | enums.language.any...
 site                    | string        | <passthrough>                 | N/A
 author                  | string        | <passthrough>                 | N/A
-exclude                 | string        | Any property of Post.thread   | Post.thread.site
+exclude                 | object        | key: Any property of Post.thread, value: <passthrough>| {site: 'yahoo.com'}
 size                    | int           | Any integer greater than zero | 10
 thread.country          | string        | <passthrough>                 | N/A
 thread.url              | string        | <passthrough>                 | N/A
@@ -77,6 +97,21 @@ location                | string        | <passthrough>                 | N/A
 spam_score              | float         | Any float between 0 and 1     | N/A
 is_first                | boolean       | true, false                   | N/A
 
-Polling
+Errors
 -------
 
+Hack the Module
+-------
+### Contribute
+Please feel free to contribute to webhose-nodejs. Simply fork and submit any changes as a Pull Request.
+
+### Test
+There is a unit/integration test suite included in the module. You can run it using the preconfigured NPM test script (Mocha), or configure your own IDE to run the tests with Mocha. Remember to set the WEBHOSE environment variables first.
+
+```bash
+$ WEBHOSE_TOKEN=[your_token] WEBHOSE_URI=https://webhose.io/search npm test
+```
+
+### Continuous Integration
+There is a `shippable.yml` configuration file included in webhose-nodejs that can be used to integrate with Shippable, a Docker-backed CI service. For more details, go here:
+http://docs.shippable.com/en/latest/
