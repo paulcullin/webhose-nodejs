@@ -7,8 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test --recursive",
-    "test:shippable": "mocha test --reporter xunit > shippable/testresults/result.xml"
+    "test": "mocha test --recursive --reporter xunit > shippable/testresults/result.xml"
   },
   "repository": {
     "type": "git",
