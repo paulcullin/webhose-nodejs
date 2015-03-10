@@ -17,8 +17,15 @@ Installing
 $ npm install webhose-nodejs
 ```
 
-Use the API
+Quick Start
 -----------
+The module depends on two Node environment variables:
+```bash
+$ WEBHOSE_TOKEN=[your token] WEBHOSE_URI=https://webhose.io/search
+```
+WEBHOSE_URI has been included so you can dynamically set the value for multi-environment and integration testing support.
+
+Once these environment variables have been set, executing a query is as easy as this:
 ```node
 var webhose = require('webhose-nodejs');
 
@@ -41,9 +48,34 @@ webhose.search(q, options, function(err, res) {
 });
 ```
 
-Full documentation
-------------------
+Search Method Documentation
+----------------------------
+### Query Argument
+ - required, string
 
+For now, the q argument simply accepts a string that must be formatted according to the Webhose.io API requirements.
+
+### Options
+ - optional, object
+
+Option                  | Value Type    | Acceptable Values             | Example
+------------------------| --------------| ------------------------------|----------------------
+format                  | string        | json, xml                     | enums.format.json...
+language                | string        | any, english, spanish         | enums.language.any...
+site_type               | string        | any, news, blogs, discussions | enums.language.any...
+site                    | string        | <passthrough>                 | N/A
+author                  | string        | <passthrough>                 | N/A
+exclude                 | string        | Any property of Post.thread   | Post.thread.site
+size                    | int           | Any integer greater than zero | 10
+thread.country          | string        | <passthrough>                 | N/A
+thread.url              | string        | <passthrough>                 | N/A
+thread.section_title    | string        | <passthrough>                 | N/A
+thread.title            | string        | <passthrough>                 | N/A
+person                  | string        | <passthrough>                 | N/A
+organization            | string        | <passthrough>                 | N/A
+location                | string        | <passthrough>                 | N/A
+spam_score              | float         | Any float between 0 and 1     | N/A
+is_first                | boolean       | true, false                   | N/A
 
 Polling
 -------
