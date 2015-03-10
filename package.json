@@ -1,6 +1,6 @@
 {
   "name": "webhose-nodejs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "webhose.io client for Node.js",
   "main": "webhose.js",
   "directories": {
