@@ -1,7 +1,8 @@
 'use strict'
 
 var Post = require('./post.js'),
-    Errors = require('./errors.js');
+    Errors = require('./errors.js'),
+    Enums = require('./enums.js');
 
 // Constructor
 var Webhose = function (get) {
@@ -67,19 +68,19 @@ Webhose.prototype.validateOptions = function (options) {
     var errors = [];
 
     if (options.format) {
-        if (options.format !== this.enums.format.json && options.format !== this.enums.format.xml) {
+        if (options.format !== Enums.format.json && options.format !== Enums.format.xml) {
             errors.push(Errors.InvalidFormatOptionException);
         }
     }
 
     if (options.language) {
-        if (!this.isObjectProperty(this.enums.language, options.language)) {
+        if (!this.isObjectProperty(Enums.language, options.language)) {
             errors.push(Errors.InvalidLanguageOptionException);
         }
     }
 
     if (options.site_type) {
-        if (!this.isObjectProperty(this.enums.siteType, options.site_type)) {
+        if (!this.isObjectProperty(Enums.siteType, options.site_type)) {
             errors.push(Errors.InvalidSiteTypeOptionException);
         }
     }
@@ -127,25 +128,6 @@ Webhose.prototype.isObjectProperty = function (obj, prop) {
         }
     }
     return false;
-};
-
-Webhose.prototype.enums = {
-    format: {
-        json: 'json',
-        xml: 'xml'
-    },
-    language: {
-        any: 'any',
-        english: 'english',
-        spanish: 'spanish'
-    },
-    siteType: {
-        any: 'any',
-        news: 'news',
-        blogs: 'blogs',
-        discussions: 'discussions'
-    },
-    size: 100
 };
 
 module.exports = Webhose;
