@@ -124,6 +124,24 @@ Examples:
 
 The `res.data` property will be the raw response body passed directly through from Webhose, in order to provide flexibility. The response will default to JSON, but if you specify `options: {format: 'xml'}` for example, the response will come back from Webhose as XML.
 
+Exception Handling
+-------
+To enable a cohesive exception handling flow, surround your calls to the `search()` method with a try/catch block. There is an `errors` object attached to Webhose that you can use if necessary to trap specific exceptions.
+
+```node
+try {
+    webhose.search('query', options, function(err, res) {
+        // do stuff...
+    }
+} catch (ex) {
+    switch (ex) {
+        case webhose.errors.SearchArgumentException:
+            console.log(ex);
+            break;
+    }
+}
+```
+
 Hack the Module
 -------
 ### Contribute
