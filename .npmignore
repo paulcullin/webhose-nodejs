@@ -35,3 +35,6 @@ shippable
 
 # Shippable file
 shippable.yml
+
+# Test folder
+test
