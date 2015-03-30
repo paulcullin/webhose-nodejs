@@ -5,6 +5,10 @@ env:
     - WEBHOSE_URI=https://webhose.io/search
     - secure: Dz0VK4AJd7uiQqAX0zvxaKdQyKZbt3g+Bpsu+QWw8IFTdVC86balVc4GHx/eXJaUZKvGOtpuja3TfNoJoSscQQue0JMwgyi0NopK8kJa4TILUnzQ27aeRApnDTdvJYuNCjoxJYSWa63KjuSjgztB6wV3YFqhIoZhmgrxBNL33Up26rJ+j5Il317ojW5wguP0ILakXN3r97PlvSXFaJD1jc4btWPAS7NcPLNkQfjF0dIOsR3gjefRtNKi/qRrVIY4KtAWUzIzJnNvEh3UvwsFjye7YdSN+PAEXuQPPtdyya645BuRY9KiJePUdHXT6JMJ9yFqQ+CmCzfXoGfQEQ2TpA==
 
+branches:
+  only:
+    - develop
+
 notifications:
     email:
         - pcullin@weareratio.com
